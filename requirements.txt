@@ -1,0 +1,5 @@
+opencv-python==4.10.0.82
+mss==9.0.1
+numpy==1.26.3
+psutil==5.9.8
+PyAutoGUI==0.9.54

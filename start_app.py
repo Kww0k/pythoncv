@@ -20,11 +20,14 @@ def is_process_running(process_name):
 with mss.mss() as sct:
     is_have_app = False
     while True:
+        if is_process_running('wemeetapp.exe'):
+            is_have_app = True
+            break
         pic = sct.grab(arr)
         pic = np.array(pic)
         huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
 
-        to = cv2.imread("app.png")
+        to = cv2.imread("img/app.png")
         to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
 
         chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
@@ -47,9 +50,6 @@ with mss.mss() as sct:
 
             print(average_x, average_y)
             pyautogui.doubleClick(average_x, average_y)
-            if is_process_running('wemeetapp.exe'):
-                is_have_app = True
-                break
         else:
             print("没有相似的")
 
@@ -60,7 +60,7 @@ with mss.mss() as sct:
             pic = np.array(pic)
             huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
 
-            is_login = cv2.imread("logined.png")
+            is_login = cv2.imread("img/logined.png")
             is_login_huidu = cv2.cvtColor(is_login, cv2.COLOR_BGR2GRAY)
             chazhao = cv2.matchTemplate(huidu, is_login_huidu, cv2.TM_CCOEFF_NORMED)
             shaixuan = np.where(chazhao >= 0.85)
@@ -69,7 +69,7 @@ with mss.mss() as sct:
                 print("已登录")
                 break
 
-            to = cv2.imread("phoneLogin.png")
+            to = cv2.imread("img/phoneLogin.png")
             to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
 
             chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
@@ -104,7 +104,7 @@ with mss.mss() as sct:
             pic = np.array(pic)
             huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
 
-            to = cv2.imread("phone.png")
+            to = cv2.imread("img/phone.png")
             to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
 
             chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
@@ -141,7 +141,7 @@ with mss.mss() as sct:
             pic = np.array(pic)
             huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
 
-            to = cv2.imread("login.png")
+            to = cv2.imread("img/login.png")
             to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
 
             chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
