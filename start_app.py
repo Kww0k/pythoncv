@@ -29,9 +29,7 @@ with mss.mss() as sct:
 
         to = cv2.imread("img/app.png")
         to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
-
         chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
-
         shaixuan = np.where(chazhao >= 0.85)
         liebiao = list(zip(*shaixuan[::-1]))
 
