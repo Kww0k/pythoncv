@@ -17,151 +17,73 @@ def is_process_running(process_name):
     return False
 
 
+def getLab(tool, img):
+    pic = tool.grab(arr)
+    pic = np.array(pic)
+    gray_level = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
+
+    search = cv2.imread(img)
+    search_gray_level = cv2.cvtColor(search, cv2.COLOR_BGR2GRAY)
+
+    compare = cv2.matchTemplate(gray_level, search_gray_level, cv2.TM_CCOEFF_NORMED)
+
+    filtration = np.where(compare >= 0.85)
+    result = list(zip(*filtration[::-1]))
+
+    if len(result) > 0:
+        # 提取 x 和 y 值
+        x_values = [coord[0] for coord in result]
+        y_values = [coord[1] for coord in result]
+        # 计算 x 和 y 的总和
+        sum_x = sum(x_values)
+        sum_y = sum(y_values)
+        # 计算 x 和 y 的平均值
+        average_x = sum_x / len(result) if result else float('nan')
+        average_y = sum_y / len(result) if result else float('nan')
+        return average_x, average_y
+    else:
+        return None, None
+
+
 with mss.mss() as sct:
     is_have_app = False
     while True:
         if is_process_running('wemeetapp.exe'):
             is_have_app = True
             break
-        pic = sct.grab(arr)
-        pic = np.array(pic)
-        huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
-
-        to = cv2.imread("img/app.png")
-        to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
-        chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
-        shaixuan = np.where(chazhao >= 0.85)
-        liebiao = list(zip(*shaixuan[::-1]))
-
-        if len(liebiao) > 0:
-            # 提取 x 和 y 值
-            x_values = [coord[0] for coord in liebiao]
-            y_values = [coord[1] for coord in liebiao]
-
-            # 计算 x 和 y 的总和
-            sum_x = sum(x_values)
-            sum_y = sum(y_values)
-
-            # 计算 x 和 y 的平均值
-            average_x = sum_x / len(liebiao) if liebiao else float('nan')
-            average_y = sum_y / len(liebiao) if liebiao else float('nan')
-
-            print(average_x, average_y)
-            pyautogui.doubleClick(average_x, average_y)
-        else:
-            print("没有相似的")
+        x, y = getLab(sct, "img/app.png")
+        if x and y:
+            pyautogui.doubleClick(x=x, y=y)
+            is_have_app = True
+            break
 
     ready_to_login = False
     if is_have_app:
         while True:
-            pic = sct.grab(arr)
-            pic = np.array(pic)
-            huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
-
-            is_login = cv2.imread("img/logined.png")
-            is_login_huidu = cv2.cvtColor(is_login, cv2.COLOR_BGR2GRAY)
-            chazhao = cv2.matchTemplate(huidu, is_login_huidu, cv2.TM_CCOEFF_NORMED)
-            shaixuan = np.where(chazhao >= 0.85)
-            liebiao = list(zip(*shaixuan[::-1]))
-            if len(liebiao) > 0:
+            x, y = getLab(sct, "img/login.png")
+            if x and y:
                 print("已登录")
-                break
-
-            to = cv2.imread("img/phoneLogin.png")
-            to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
-
-            chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
-
-            shaixuan = np.where(chazhao >= 0.85)
-            liebiao = list(zip(*shaixuan[::-1]))
-
-            if len(liebiao) > 0:
-                # 提取 x 和 y 值
-                x_values = [coord[0] for coord in liebiao]
-                y_values = [coord[1] for coord in liebiao]
-
-                # 计算 x 和 y 的总和
-                sum_x = sum(x_values)
-                sum_y = sum(y_values)
-
-                # 计算 x 和 y 的平均值
-                average_x = sum_x / len(liebiao) if liebiao else float('nan')
-                average_y = sum_y / len(liebiao) if liebiao else float('nan')
-
-                print(average_x, average_y)
-                pyautogui.click(average_x, average_y)
+            x, y = getLab(sct, "img/phoneLogin.png")
+            if x and y:
+                pyautogui.click(x=x, y=y)
                 ready_to_login = True
                 break
-            else:
-                print("没有相似的")
 
     phone_ready = False
     if ready_to_login:
         while True:
-            pic = sct.grab(arr)
-            pic = np.array(pic)
-            huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
-
-            to = cv2.imread("img/phone.png")
-            to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
-
-            chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
-
-            shaixuan = np.where(chazhao >= 0.85)
-            liebiao = list(zip(*shaixuan[::-1]))
-
-            if len(liebiao) > 0:
-                # 提取 x 和 y 值
-                x_values = [coord[0] for coord in liebiao]
-                y_values = [coord[1] for coord in liebiao]
-
-                # 计算 x 和 y 的总和
-                sum_x = sum(x_values)
-                sum_y = sum(y_values)
-
-                # 计算 x 和 y 的平均值
-                average_x = sum_x / len(liebiao) if liebiao else float('nan')
-                average_y = sum_y / len(liebiao) if liebiao else float('nan')
-
-                print(average_x, average_y)
-                pyautogui.click(average_x, average_y)
-                pyautogui.typewrite("your phone")
+            x, y = getLab(sct, "img/phone.png")
+            if x and y:
+                pyautogui.click(x=x, y=y)
+                pyautogui.typewrite("19858591692")
                 pyautogui.press("tab")
-                pyautogui.typewrite("your password")
+                pyautogui.typewrite("2503841.Sb")
                 phone_ready = True
                 break
-            else:
-                print("没有相似的")
 
     if phone_ready:
         while True:
-            pic = sct.grab(arr)
-            pic = np.array(pic)
-            huidu = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
-
-            to = cv2.imread("img/login.png")
-            to_huidu = cv2.cvtColor(to, cv2.COLOR_BGR2GRAY)
-
-            chazhao = cv2.matchTemplate(huidu, to_huidu, cv2.TM_CCOEFF_NORMED)
-
-            shaixuan = np.where(chazhao >= 0.85)
-            liebiao = list(zip(*shaixuan[::-1]))
-
-            if len(liebiao) > 0:
-                # 提取 x 和 y 值
-                x_values = [coord[0] for coord in liebiao]
-                y_values = [coord[1] for coord in liebiao]
-
-                # 计算 x 和 y 的总和
-                sum_x = sum(x_values)
-                sum_y = sum(y_values)
-
-                # 计算 x 和 y 的平均值
-                average_x = sum_x / len(liebiao) if liebiao else float('nan')
-                average_y = sum_y / len(liebiao) if liebiao else float('nan')
-
-                print(average_x, average_y)
-                pyautogui.click(average_x, average_y)
+            x, y = getLab(sct, "img/login.png")
+            if x and y:
+                pyautogui.click(x=x, y=y)
                 break
-            else:
-                print("没有相似的")
